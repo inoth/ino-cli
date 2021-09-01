@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ino-cli/command/initialize"
 	"ino-cli/inocmd"
 	"log"
 	"strings"
@@ -27,7 +28,7 @@ USAGE
     gf COMMAND [ARGUMENT] [OPTION]
 COMMAND
 	version    print version
-    init       create and initialize an empty GF project...
+    init       create and initialize an empty project...
 `, DefaultTrimChars)
 )
 
@@ -45,6 +46,8 @@ func main() {
 	switch command {
 	case "help":
 		help(inocmd.GetArg(2))
+	case "init":
+		initialize.Run()
 	case "version":
 		version()
 	default:
@@ -55,7 +58,7 @@ func main() {
 func help(command string) {
 	switch command {
 	case "init":
-		log.Fatalln("init")
+		initialize.Help()
 	default:
 		log.Fatalln(helpContent)
 	}
