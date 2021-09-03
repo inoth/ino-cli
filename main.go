@@ -3,6 +3,7 @@ package main
 import (
 	"ino-cli/command/initialize"
 	"ino-cli/inocmd"
+	"ino-cli/proxy"
 	"log"
 	"strings"
 )
@@ -31,6 +32,10 @@ COMMAND
     init       create and initialize an empty project...
 `, DefaultTrimChars)
 )
+
+func init() {
+	proxy.AutoSet()
+}
 
 func main() {
 	defer func() {
