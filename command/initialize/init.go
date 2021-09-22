@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"ino-cli/inocmd"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -82,12 +81,12 @@ func unZip(data []byte, dst string) bool {
 			return false
 		}
 	}
+
 	for _, file := range zr.File {
 		path := filepath.Join(dst, file.Name)
 		if pt != "" {
 			path = strings.Replace(path, pt, "", -1)
 		}
-		println(path)
 		if file.FileInfo().IsDir() {
 			if err = os.MkdirAll(path, file.Mode()); err != nil {
 				log.Fatal(err.Error())
@@ -105,13 +104,17 @@ func unZip(data []byte, dst string) bool {
 				}
 			}
 		}
-
+		// println(path)
 		fr, err := file.Open()
 		if err != nil {
 			log.Fatal(err.Error())
 			return false
 		}
 		defer fr.Close()
+
+		buf, _ := ioutil.ReadAll(fr)
+		// fmt.Printf("%v", string(buf))
+		ns := strings.Replace(string(buf), "<project-name>", dst, -1)
 
 		fw, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_TRUNC, file.Mode())
 		if err != nil {
@@ -120,7 +123,9 @@ func unZip(data []byte, dst string) bool {
 		}
 		defer fw.Close()
 
-		_, err = io.Copy(fw, fr)
+		_, err = fw.WriteString(ns)
+
+		// _, err = io.Copy(fw, fr)
 		if err != nil {
 			log.Fatal(err.Error())
 			return false
