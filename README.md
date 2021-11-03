@@ -1,0 +1,1 @@
+ino init project-name
