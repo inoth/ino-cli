@@ -1,4 +1,4 @@
-package initialize
+package init
 
 import (
 	"archive/zip"
@@ -34,7 +34,7 @@ var (
 func Help() {
 	log.Fatalln(strings.TrimLeft(`
 USAGE    
-    ino init NAME
+    ino init [NAME]
 ARGUMENT 
     NAME  name for the project. It will create a folder with NAME in current directory.
           The NAME will also be the module name for the project.

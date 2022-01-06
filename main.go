@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ino-cli/command/initialize"
-	"ino-cli/inocmd"
+	"ino-cli/cmd"
+	"ino-cli/command/init"
 	"ino-cli/proxy"
 	"log"
 	"strings"
@@ -26,7 +26,7 @@ var (
 	})
 	helpContent = strings.TrimLeft(`
 USAGE
-    gf COMMAND [ARGUMENT] [OPTION]
+    ino-cli COMMAND [ARGUMENT] [OPTION]
 COMMAND
 	version    print version
     init       create and initialize an empty project...
@@ -47,12 +47,12 @@ func main() {
 			}
 		}
 	}()
-	command := inocmd.GetArg(1)
+	command := cmd.GetArg(1)
 	switch command {
 	case "help":
-		help(inocmd.GetArg(2))
+		help(cmd.GetArg(2))
 	case "init":
-		initialize.Run()
+		init.Run()
 	case "version":
 		version()
 	default:
@@ -63,7 +63,7 @@ func main() {
 func help(command string) {
 	switch command {
 	case "init":
-		initialize.Help()
+		init.Help()
 	default:
 		log.Fatalln(helpContent)
 	}

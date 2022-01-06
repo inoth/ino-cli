@@ -1,4 +1,4 @@
-package inocmd
+package cmd
 
 import (
 	"os"
