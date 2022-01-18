@@ -3,7 +3,7 @@ package init
 import (
 	"archive/zip"
 	"bytes"
-	"ino-cli/inocmd"
+	"ino-cli/cmd"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -44,7 +44,7 @@ EXAMPLES
 }
 
 func Run() {
-	projectName := inocmd.GetArg(2)
+	projectName := cmd.GetArg(2)
 	if projectName == "" {
 		projectName = emptyProjectName
 	}
