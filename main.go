@@ -2,7 +2,7 @@ package main
 
 import (
 	"ino-cli/cmd"
-	"ino-cli/command/init"
+	"ino-cli/command/initialize"
 	"ino-cli/proxy"
 	"log"
 	"strings"
@@ -52,7 +52,7 @@ func main() {
 	case "help":
 		help(cmd.GetArg(2))
 	case "init":
-		init.Run()
+		initialize.Run()
 	case "version":
 		version()
 	default:
@@ -63,7 +63,7 @@ func main() {
 func help(command string) {
 	switch command {
 	case "init":
-		init.Help()
+		initialize.Help()
 	default:
 		log.Fatalln(helpContent)
 	}
