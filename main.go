@@ -1,11 +1,12 @@
 package main
 
 import (
-	"ino-cli/cmd"
-	"ino-cli/command/initialize"
-	"ino-cli/proxy"
 	"log"
 	"strings"
+
+	"github.com/inoth/ino-cli/cmd"
+	"github.com/inoth/ino-cli/command/initialize"
+	"github.com/inoth/ino-cli/proxy"
 )
 
 const (

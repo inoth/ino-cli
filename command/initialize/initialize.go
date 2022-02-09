@@ -3,13 +3,14 @@ package initialize
 import (
 	"archive/zip"
 	"bytes"
-	"ino-cli/cmd"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/inoth/ino-cli/cmd"
 )
 
 const (
