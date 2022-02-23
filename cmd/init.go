@@ -5,7 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,8 +14,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const defaultProject = "defaultProject"
-const zipPath = ""
+var (
+	projectName   = "defaultProject"
+	zipPath       = "https://github.com/inoth/ino-empty/archive/refs/heads/v2.zip"
+	remotePackage = true
+)
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -24,12 +26,12 @@ var initCmd = &cobra.Command{
 	Short: "初始化项目手脚架",
 	Long:  `初始化项目手脚架`,
 	Run: func(cmd *cobra.Command, args []string) {
-		projectName := args[0]
-		if projectName == "" {
-			util.Must(errors.New("projectName invalid."))
+		name := args[0]
+		if name != "" {
+			projectName = name
 		}
 		fmt.Printf("%v initialization...\n", projectName)
-		util.Must(InitProject(projectName))
+		util.Must(InitProject())
 	},
 }
 
@@ -37,27 +39,40 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 }
 
-// 拉取远程资源包
+// 获取远程包前提下，监测本地下载是否存在，否则去拉取远程包
 // 解压缩
 // 替换项目名称
 // 写入文件夹
-func InitProject(projectName string) error {
+func InitProject() error {
+
 	return nil
 }
 
-// 下载初始化资源包
-func DownloadPackage() ([]byte, error) {
+// 下载初始化资源包到本地
+func downloadPackage() (string, error) {
 	fmt.Println("download package...")
 	respData, err := http.Get(zipPath)
 	if err != nil {
 		log.Fatal(err.Error())
-		return nil, err
+		return "", err
 	}
 	defer respData.Body.Close()
 	zipData, err := ioutil.ReadAll(respData.Body)
 	if err != nil {
 		log.Fatal(err.Error())
-		return nil, err
+		return "", err
 	}
-	return zipData, nil
+	// 写到磁盘上，回传路径
+	// return zipData, nil
+	return string(zipData), nil
+}
+
+// 解压后资源放入内存中
+func unZip(path string) ([]byte, error) {
+	return nil, nil
+}
+
+// 输出成品到文件目录
+func export(data []byte, path string) error {
+	return nil
 }
