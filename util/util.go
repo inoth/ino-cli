@@ -7,7 +7,7 @@ import (
 
 func Must(err error) {
 	if err != nil {
-		fmt.Errorf("%v", err)
+		fmt.Printf("%v", err)
 		os.Exit(1)
 	}
 }
