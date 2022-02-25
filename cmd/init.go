@@ -103,7 +103,6 @@ func DownloadPackage(url string) (string, error) {
 		return "", err
 	}
 	// 写到磁盘上，回传路径
-	// return zipData, nil
 	fileName := fmt.Sprintf("%s.zip", projectName)
 	filePath := fmt.Sprintf("%s/%s", downloadPath, fileName)
 	fmt.Printf("package write to disk %s...\n", filePath)
@@ -151,8 +150,7 @@ func UnZipAndOutput(path string) error {
 				}
 			}
 		}
-		// 写入磁盘
-		fmt.Printf("%s output...\n", item.Name)
+
 		fr, err := item.Open()
 		if err != nil {
 			return err
@@ -165,7 +163,8 @@ func UnZipAndOutput(path string) error {
 		if err != nil {
 			return err
 		}
-
 	}
+	// 写入磁盘
+	fmt.Printf("finish output...\n")
 	return nil
 }
