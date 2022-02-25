@@ -7,6 +7,11 @@ import (
 	"testing"
 
 	"github.com/inoth/ino-cli/cmd"
+	"github.com/inoth/ino-cli/codegen"
+	"github.com/inoth/ino-cli/config"
+	"github.com/inoth/ino-cli/db"
+	"github.com/inoth/ino-cli/global"
+	"github.com/inoth/ino-cli/util"
 )
 
 func TestDownload(t *testing.T) {
@@ -56,4 +61,18 @@ func TestPath(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println("符号链接真实路径:" + realPath)
+}
+
+func TestGenEntity(t *testing.T) {
+	dbstr := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True&loc=Local", "glasses_mp", "yKxm5jhhwqslOrIj", "rm-uf64ywy4i93cxvt9tzo.mysql.rds.aliyuncs.com:3306", "zk_board")
+	util.Must(global.Register(
+		config.ViperConfig{}.SetDefaultValue(map[string]interface{}{
+			"db":      dbstr,
+			"dbName":  "glasses_mp",
+			"tables":  nil,
+			"project": "testproject",
+		}),
+		&db.MysqlConnect{}).
+		Init().
+		Run(&codegen.MysqlGormEntity{}))
 }

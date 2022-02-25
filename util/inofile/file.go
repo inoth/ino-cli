@@ -72,3 +72,28 @@ func WriteToFileByString(data string, path string, fileMode fs.FileMode) error {
 	}
 	return nil
 }
+
+func CreateFileBytes(path string, write func(*os.File) error) error {
+	fw, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer fw.Close()
+	// _, err = fw.Write(content)
+	err = write(fw)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
+}
