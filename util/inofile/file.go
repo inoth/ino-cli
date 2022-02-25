@@ -1,11 +1,25 @@
-package util
+package inofile
 
 import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
+
+func GetBasePath() string {
+	ex, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	exPath := filepath.Dir(ex)
+	realPath, err := filepath.EvalSymlinks(exPath)
+	if err != nil {
+		return ""
+	}
+	return realPath
+}
 
 func GetFileNames(path string) ([]string, error) {
 	files, err := ioutil.ReadDir(path)
@@ -19,12 +33,8 @@ func GetFileNames(path string) ([]string, error) {
 	return fileNames, nil
 }
 
-func Makedir(path string, fileMode fs.FileMode) error {
-	return os.MkdirAll(path, fileMode)
-}
-
 func ReadFile(path string) ([]byte, error) {
-	fw, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0755)
+	fw, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		return nil, err
 	}

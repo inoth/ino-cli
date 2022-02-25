@@ -15,15 +15,16 @@ import (
 	"strings"
 
 	"github.com/inoth/ino-cli/util"
+	"github.com/inoth/ino-cli/util/inofile"
 	"github.com/spf13/cobra"
 )
 
 var (
-	templateName  = "ino-empty-2.zip"
+	templateName  = "ino-empty-2"
 	projectName   = "defaultProject"
 	zipPath       = "https://github.com/inoth/ino-empty/archive/refs/heads/v2.zip"
 	remotePackage = true
-	downloadPath  = "remote/zip/"
+	downloadPath  = "remote/zip"
 	exportPath    = "export"
 )
 var (
@@ -49,8 +50,12 @@ var initCmd = &cobra.Command{
 			zipPath = p_zipPath
 		}
 		if p_output != "" {
-			exportPath = fmt.Sprintf("./%s/", p_output)
+			exportPath = p_output
 		}
+		// if basePath := inofile.GetBasePath(); basePath != "" {
+		// 	downloadPath = fmt.Sprintf("%s/%s/", basePath, downloadPath)
+		// 	exportPath = fmt.Sprintf("%s/%s/", basePath, exportPath)
+		// }
 		fmt.Printf("%v initialization...\n", projectName)
 		util.Must(InitProject())
 	},
@@ -70,27 +75,24 @@ func init() {
 func InitProject() error {
 	var fileName string
 	if remotePackage {
-		var ok bool
-		fileName, ok = checkLocalFile()
-		if !ok {
-			var err error
-			fileName, err = downloadPackage()
-			if err != nil {
-				return err
-			}
+		var err error
+		fileName, err = DownloadPackage(zipPath)
+		if err != nil {
+			return err
 		}
+		fileName = fmt.Sprintf("%s/%s", downloadPath, fileName)
+	} else {
+		fileName = zipPath
 	}
-	// println(fileName)
-	// return nil
-	err := unZipAndOutput(downloadPath + fileName)
-	// fmt.Printf("%v", err)
+	fmt.Printf("handler %s", fileName)
+	err := UnZipAndOutput(fileName)
 	return err
 }
 
 // 下载初始化资源包到本地
-func downloadPackage() (string, error) {
+func DownloadPackage(url string) (string, error) {
 	fmt.Println("download package...")
-	respData, err := http.Get(zipPath)
+	respData, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
@@ -102,53 +104,39 @@ func downloadPackage() (string, error) {
 	}
 	// 写到磁盘上，回传路径
 	// return zipData, nil
-	fileName := templateName
-	fmt.Println("package write to disk..." + downloadPath + fileName)
-	util.Makedir(downloadPath, 0755)
-	err = util.WriteToFile(zipData, downloadPath+fileName, 0755)
+	fileName := fmt.Sprintf("%s.zip", projectName)
+	filePath := fmt.Sprintf("%s/%s", downloadPath, fileName)
+	fmt.Printf("package write to disk %s...\n", filePath)
+	os.MkdirAll(downloadPath, 0755)
+	err = ioutil.WriteFile(filePath, zipData, 0755)
 	if err != nil {
 		return "", err
 	}
 	return fileName, nil
 }
 
-func checkLocalFile() (string, bool) {
-	fileNames, err := util.GetFileNames(downloadPath)
-	if err != nil {
-		return "", false
-	}
-	file := templateName
-	for _, fileName := range fileNames {
-		if fileName == file {
-			return fileName, true
-		}
-	}
-	return "", false
-}
-
 // 解压后资源放入内存中
-func unZipAndOutput(path string) error {
+func UnZipAndOutput(path string) error {
 	fmt.Printf("unzip %s package...\n", path)
-	util.Makedir(exportPath, 0755)
-
-	// buf, err := util.ReadFile(path)
+	// inofile.Makedir(exportPath, 0755)
+	// buf, err := inofile.ReadFile(path)
 	// if err != nil {
 	// 	return err
 	// }
-
 	// zr, err := zip.NewReader(bytes.NewReader(buf), int64(len(buf)))
 	zr, err := zip.OpenReader(path)
 	if err != nil {
 		return err
 	}
-	err = util.Makedir(projectName, 0755)
-	if err != nil {
+	if err = os.MkdirAll(projectName, 0755); err != nil {
 		return err
 	}
 	for _, item := range zr.File {
 		path := filepath.Join(projectName, item.Name)
+		path = strings.Replace(path, templateName, "", -1)
+
 		if item.FileInfo().IsDir() {
-			err = util.Makedir(projectName, 0755)
+			err = os.MkdirAll(projectName, 0755)
 			if err != nil {
 				return err
 			}
@@ -164,7 +152,7 @@ func unZipAndOutput(path string) error {
 			}
 		}
 		// 写入磁盘
-		fmt.Println("output...")
+		fmt.Printf("%s output...\n", item.Name)
 		fr, err := item.Open()
 		if err != nil {
 			return err
@@ -173,7 +161,7 @@ func unZipAndOutput(path string) error {
 
 		content, _ := ioutil.ReadAll(fr)
 		newContent := strings.Replace(string(content), "defaultProject", projectName, -1)
-		err = util.WriteToFileByString(newContent, path, item.Mode())
+		err = inofile.WriteToFileByString(newContent, path, item.Mode())
 		if err != nil {
 			return err
 		}
@@ -181,8 +169,3 @@ func unZipAndOutput(path string) error {
 	}
 	return nil
 }
-
-// // 输出成品到文件目录
-// func export(data []byte, path string) error {
-// 	return nil
-// }
