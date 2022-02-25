@@ -13,8 +13,6 @@ func TestDownload(t *testing.T) {
 	var (
 		zipPath = "https://github.com/inoth/ino-empty/archive/refs/heads/v2.zip"
 	)
-	// os.Setenv("export", "http_proxy=http://127.0.0.1:1087")
-	// os.Setenv("export", "https_proxy=http://127.0.0.1:1087")
 
 	fileName, err := cmd.DownloadPackage(zipPath)
 	if err != nil {
