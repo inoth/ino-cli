@@ -5,12 +5,7 @@ import (
 	"os"
 
 	"github.com/inoth/ino-cli/cmd"
-	"github.com/inoth/ino-cli/proxy"
 )
-
-func init() {
-	proxy.AutoSet()
-}
 
 func main() {
 	defer func() {

@@ -22,17 +22,10 @@ type GlobalRegister struct {
 	servers []IRegister
 }
 
-// func Instance() *GlobalRegister {
-// 	once.Do(func() {
-// 		model = &GlobalRegister{}
-// 	})
-// 	return model
-// }
-
 // 注册组件
 func Register(models ...IRegister) *GlobalRegister {
 	if len(models) <= 0 {
-		fmt.Errorf("%v", errors.New("No services have been loaded yet."))
+		fmt.Printf("%v\n", errors.New("No services have been loaded yet."))
 		os.Exit(1)
 	}
 	model := &GlobalRegister{}
@@ -57,6 +50,14 @@ func (g *GlobalRegister) SubServe(serve ...IServeStart) *GlobalRegister {
 		go func(svc IServeStart) {
 			defer func() {
 				// TODO:协程内单独的异常捕获
+				if exception := recover(); exception != nil {
+					if err, ok := exception.(error); ok {
+						fmt.Printf("%v\n", err)
+					} else {
+						panic(exception)
+					}
+					os.Exit(1)
+				}
 			}()
 			svc.ServeStart()
 		}(subSvc)
