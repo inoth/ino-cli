@@ -1,1 +1,1 @@
-ino init project-name
+# ino-cli
