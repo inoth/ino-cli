@@ -2,7 +2,10 @@ module github.com/inoth/ino-cli
 
 go 1.17
 
-require github.com/spf13/cobra v1.3.0
+require (
+	github.com/spf13/cobra v1.3.0
+	gorm.io/gorm v1.23.1
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
@@ -21,7 +24,6 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/gorm v1.23.1 // indirect
 )
 
 require (

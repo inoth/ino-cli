@@ -7,7 +7,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/inoth/ino-cli/codegen"
+	"github.com/inoth/ino-cli/components/codegen"
 	"github.com/inoth/ino-cli/config"
 	"github.com/inoth/ino-cli/db"
 	"github.com/inoth/ino-cli/global"
