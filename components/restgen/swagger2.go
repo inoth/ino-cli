@@ -40,7 +40,7 @@ func (s *Swag2Process) Process() error {
 			fmt.Printf("开始生成[%s]\n", url)
 			// 统合生成结果
 			r := s.process(host, url, method)
-			fmt.Printf("[%s]生成结果：%s\n", url, r)
+			// fmt.Printf("[%s]生成结果：%s\n", url, r)
 			<-ch_limit // 释放占用
 			ch_pathContent <- r
 			return

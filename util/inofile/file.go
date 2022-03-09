@@ -56,7 +56,7 @@ func WriteToFile(data []byte, path string, fileMode fs.FileMode) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("下载zip，大小%d\n", n)
+	fmt.Printf("写入完毕，大小%d\n", n)
 	return nil
 }
 
