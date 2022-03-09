@@ -12,21 +12,37 @@ type RestModule struct {
 	Host     string
 	Url      string
 	Consumes string
-	Params   map[string]string
+	ShowBody bool
+	Params   map[string]interface{}
 }
 
 var RestHttpTmpl = `
 ### {{.Summary}}
 
 {{.Method}} http://{{.Host}}{{.Url}} HTTP/1.1
-content-type: {{.Consumes}}
+{{if .ShowBody }}content-type:{{ end }} {{.Consumes}}
 
-{
+{{if .ShowBody -}}{ {{ end }}
    {{- range $key, $value := .Params }}
-   "{{$key}}": "{{$value}}",
+   "{{$key}}": {{$value}},
    {{- end}}
+{{if .ShowBody -}}} {{ end }}
+
+`
+
+type BodyModule struct {
+	IsArray bool
+	Body    map[string]interface{}
 }
 
+// 参数生产专用，涉及到多层引用，递归处理
+var BodyTmpl = `{{if .IsArray }}[{{ end }}
+{
+	{{- range $key, $value := .Body }}
+	"{{$key}}": {{$value}},
+	{{- end}}
+}
+{{if .IsArray }}]{{ end }}
 `
 
 type SwagParsingProcess interface {
@@ -87,7 +103,7 @@ func doParseJson(data []byte) SwaggerDocs {
 	var doc SwaggerDocs
 	err := json.Unmarshal(data, &doc)
 	if err != nil {
-		panic(errors.New("Unable to parse content."))
+		panic(err)
 	}
 	return doc
 }
@@ -102,8 +118,9 @@ type SwaggerDocs struct {
 		Title       string `json:"title"`
 		Description string `json:"description"`
 	} `json:"info"`
-	Host  string                             `json:"host"`
-	Paths map[string]map[string]RequestBlock `json:"paths"`
+	Host        string                             `json:"host"`
+	Paths       map[string]map[string]RequestBlock `json:"paths"`
+	Definitions map[string]ObjectParams            `json:"definitions"` // 引用object列表
 }
 
 type RequestBlock struct {
@@ -116,4 +133,30 @@ type ParamBlock struct {
 	Name string `json:"name"`
 	In   string `json:"in"`
 	Desc string `json:"description"`
+	Type string `json:"type"`
+	// Example interface{}      `json:"x-example"`
+	Schema ParamBlockSchema `json:"schema"` // 引用body
+}
+
+type ParamBlockSchema struct {
+	Type  string // == array 获取 item下 ref
+	Ref   string `json:"$ref"`
+	Items struct {
+		Ref string `json:"$ref"`
+	} `json:"items"`
+}
+
+type ObjectParams struct {
+	Prop map[string]ObjectProp `json:"properties"`
+}
+
+type ObjectProp struct {
+	Type  string `json:"type"`
+	Items struct {
+		Type string
+		Ref  string `json:"$ref"`
+	} `json:"items"`
+	// Example     string `json:"example"`
+	Description string `json:"description"`
+	Ref         string `json:"$ref"`
 }
