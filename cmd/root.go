@@ -14,7 +14,8 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "ino-cli",
 	Short: "一些小工具试做",
-	Long:  `一些小工具试做`,
+	Long: `inoth的工具箱，看心情添加功能。
+author： inoth`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
