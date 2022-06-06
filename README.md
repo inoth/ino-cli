@@ -22,3 +22,5 @@ Flags:
 
 Use "ino-cli [command] --help" for more information about a command.
 ```
+## 功能点扩充计划
+* 手脚架功能，整体生成后考虑后续新增常用中间件，实现 add 命令添加 redis、mongodb、mysql 之类的，注册后直接开始使用
