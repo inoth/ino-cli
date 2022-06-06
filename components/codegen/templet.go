@@ -24,8 +24,8 @@ var (
 
 	Model = "package model\n" +
 		"type {{.TableName}} struct {\n" +
-		"{{range .Fields}}\n" +
-		"{{.Field}} {{.DbType}} `gorm:\"{{.DbField}}\"`" +
+		"{{- range .Fields}}\n" +
+		"{{.Field}} {{.Type}} `gorm:\"column:{{.DbField}};type:{{.DbType}}\" json:\"{{.DbField}}\"`" +
 		"{{end}}\n}"
 )
 
@@ -60,6 +60,7 @@ type Field struct {
 	IsNull  string
 	Desc    string
 	DbType  string
+	Type    string
 }
 
 type IHandler interface {
@@ -125,8 +126,10 @@ func (e *EntityHandle) Process(wg *sync.WaitGroup, tableName string) {
 	}
 	data.Fields = make([]Field, len(cols))
 	for i, col := range cols {
-		data.Fields[i] = Field{DbType: MatchType(col.DataType),
+		data.Fields[i] = Field{
+			DbType:  col.DataType,
 			DbField: col.ColName,
+			Type:    MatchType(col.DataType),
 			Field:   NameHandler(col.ColName),
 			Desc:    col.ColDesc}
 	}
