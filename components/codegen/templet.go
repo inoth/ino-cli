@@ -26,7 +26,9 @@ var (
 		"type {{.TableName}} struct {\n" +
 		"{{- range .Fields}}\n" +
 		"{{.Field}} {{.Type}} `gorm:\"column:{{.DbField}};type:{{.DbType}}\" json:\"{{.DbField}}\"`" +
-		"{{end}}\n}"
+		"{{end}}\n}\n" +
+		"func ({{.TableName}}) TableName() string {\n" +
+		"return \"{{.DbTableName}}\" \n}"
 )
 
 func InitTemplet() {
