@@ -38,6 +38,7 @@ func InitTemplet() {
 	dataTypeMap["int"] = "int"
 	dataTypeMap["tinyint"] = "int"
 	dataTypeMap["datetime"] = "time.Time"
+	dataTypeMap["timestamp"] = "time.Time"
 
 	fileTemplate = make(map[string]IHandler)
 	fileTemplate["Model"] = &EntityHandle{
